@@ -1,0 +1,46 @@
+1、字符串类
+ a、支持不同长度的字符串
+    b、构造方法：(1)默认构造；(2)整数，浮点数构造；(3)一般构造； (4)复制构造；
+    c、运算符重载：(1)加法 + ；(2)减法 - ；(3)输出流运算符 << 
+    d、其他方法：(1)获取成员；(2)修改成员；(3)动态内存分配
+字符串类名：MyString
+MyString temp;
+MyString temp(567)）;//字符串内部存“567”
+MyString temp(buffer);//把以0结尾的buffer转换成MyString
+MyString  temp2(temp);
+MyString  temp3;
+
+temp=temp+temp2;
+temp+=23.0;//给字符串后面增加字母“23.0”，保留小数后面1位小数。
+temp-=23；//把字符串中的“23”子串删除
+temp-=“23”；//把字符串中的“23”子串删除
+temp.subString(m,n);//返回从m开始的n个字母；
+temp.find(temp2);//返回temp2子串在temp中的位置。-1表示没有找到
+temp.toInt();//数值串转换成整数，-2表示失败，无法转换；
+temp.tofloat();//数值串转换成浮点数，-2表示失败，无法转换；
+cout<<temp<<endl;//输出字符串到屏幕
+cout<<temp.length<<endl;//输出字符串长度到屏幕
+
+2、二维矩阵
+    a、支持不同大小的矩阵，并可以放入不同的数据类型
+    b、构造方法：(1)默认构造；(2)方阵构造；(3)一般矩阵构造； (4)复制构造；
+    c、运算符重载：(1)加法 + ；(2)减法 - ；(3)矩阵数乘、矩阵相乘 * ；(4)复制赋值 ；(5)输出流运算符 << 
+    d、其他方法：(1)获取成员；(2)修改成员；(3)动态内存分配
+
+矩阵类名: MyMatrix，支持一下使用方法
+MyMatrix<int> temp;
+MyMatrix<double> temp(m,n)）;//构造m*n的空矩阵
+MyMatrix<int> temp(buffer,m,n);//把buffer转换成m*n矩阵
+MyMatrix<int> temp2(temp);
+MyMatrix<int> temp3;
+temp3 = temp;//所有元素都要拷贝过去
+
+temp=temp+temp2;
+temp2=temp*3;
+int kk = (temp*=temp3);//支持矩阵乘法和矩阵向量乘，如果不能乘返回值
+
+temp2=temp-3;//每个元素加3
+cout<<temp<<endl;//输出temp格式到屏幕
+
+
+说明：第一个必须做；第二个作业做了以后成绩在良以上。
