@@ -9,6 +9,7 @@ public:
 
 	MyString();
 	MyString(int);
+	MyString(double);
 	MyString(char *);
 	MyString(MyString &ms);
 	~MyString();
@@ -44,6 +45,48 @@ MyString::MyString(int int_construct)
 	//cout << "length"<<length << endl;//打印长度
 	
 };
+MyString::MyString(double double_construct)
+{
+	
+	int temp_int = int(double_construct);//取double的整数部分
+	double temp_double = double_construct - temp_int;//取double小数部分
+	int length_int = 1;//整数长度
+	while (temp_int / 10)
+	{
+		temp_int = temp_int / 10;
+		length_int++;
+	}
+	int length_double = 0;//小数长度
+	while (temp_double * 10.0 - int(temp_double * 10.0) > 0.00001)
+	{
+		temp_double=temp_double*10.0 - int(temp_double * 10.0);
+		length_double++;
+	}
+	length_double++;//小数最后一位
+
+	int length = length_int + length_double + 1;
+	my_string_pointer = new char[length+1];
+	lenth_my_string = length;
+
+
+
+	temp_int = int(double_construct);
+	temp_double = double_construct - temp_int;//取double小数部分
+
+	for (int i = 0; i < length_double; i++)
+	{
+		temp_double = temp_double * 10.0;
+		my_string_pointer[length_int+1+i] = char(48 + int(temp_double));
+	}
+	for (int i = 0; i < length_int; i++)
+	{
+		my_string_pointer[length_int - i - 1] = char(48 + temp_int % 10);
+		temp_int = temp_int / 10;
+	}
+	my_string_pointer[length_int] = '.';
+	my_string_pointer[length] = '\0';
+
+};
 
 
 MyString::MyString(char* buffer)
@@ -70,7 +113,13 @@ MyString::MyString(char* buffer)
 };
 MyString::MyString( MyString & my_string1)
 {
-	cout << "my_string1\n";
+	lenth_my_string = my_string1.lenth_my_string;
+	my_string_pointer = new char[my_string1.lenth_my_string + 1];
+	for (int i = 0;i<my_string1.lenth_my_string; i++)
+	{
+		my_string_pointer[i] = my_string1.my_string_pointer[i];
+	}
+	my_string_pointer[lenth_my_string] = '\0';
 };
 MyString::~MyString()
 {
@@ -83,11 +132,12 @@ MyString::~MyString()
 
 void test_constructor();//构造函数的测试
 void test_int_constructor();
+void test_double_constructor();
 void test_buffer_constructor();
+void test_copy_constructor();
 int main()
 {
-	test_buffer_constructor();
-
+	test_copy_constructor();
 	return 0;
 }
 
@@ -108,6 +158,12 @@ void test_int_constructor()
 	MyString ms1(123);
 	cout << ms1.lenth_my_string <<"\t"<< ms1.my_string_pointer << endl;
 }
+void test_double_constructor()
+{
+	MyString ms1(12.0);
+	cout << ms1.my_string_pointer << endl;
+
+}
 
 void test_buffer_constructor()
 {
@@ -120,7 +176,14 @@ void test_buffer_constructor()
 	MyString ms3(test_array_char);
 	cout << ms3.lenth_my_string << "\t" << ms3.my_string_pointer << endl;
 
+}
 
+void test_copy_constructor()
+{
+	MyString ms1(123);
+	cout << "ms1:" << ms1.my_string_pointer<<"\t"<<ms1.lenth_my_string << endl;
+	MyString ms2(ms1);
+	cout << "ms2:" << ms2.my_string_pointer << "\t" << ms2.lenth_my_string << endl;
 }
 
 //MyString ms2 = MyString(10);这是不合法的
