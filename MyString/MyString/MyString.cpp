@@ -13,6 +13,10 @@ public:
 	MyString(char *);
 	MyString(MyString &ms);
 	~MyString();
+	//friend	MyString operator+(const MyString& ms2, const MyString& ms1);
+	MyString operator+(MyString& ms1);
+	//MyString operator-(MyString& ms1);
+	MyString& operator=(const MyString& ms1);
 
 };
 MyString::MyString(void)
@@ -124,9 +128,82 @@ MyString::MyString( MyString & my_string1)
 MyString::~MyString()
 {
 	//cout << "deconstructor\n";
-	delete[lenth_my_string+1] my_string_pointer;
+	delete [] my_string_pointer;
 }
 
+MyString MyString::operator+(MyString& ms1)
+{
+
+	int lenth = ms1.lenth_my_string + this->lenth_my_string;
+	MyString ms;
+	ms.lenth_my_string = lenth;
+	ms.my_string_pointer = new char[lenth + 1];
+	for (int i = 0; i < this->lenth_my_string; i++)
+	{
+		ms.my_string_pointer[i] = this->my_string_pointer[i];
+	}
+	for (int j = this->lenth_my_string; j < this->lenth_my_string + ms1.lenth_my_string; j++)
+	{
+		ms.my_string_pointer[j] = ms1.my_string_pointer[j- this->lenth_my_string];
+	}
+	ms.my_string_pointer[lenth] = '\0';
+	return ms;
+}
+
+
+/*
+MyString operator+(const MyString& ms2, const MyString& ms1)
+{
+	int lenth = ms1.lenth_my_string + ms2.lenth_my_string;
+	MyString ms;
+	ms.lenth_my_string = lenth;
+	ms.my_string_pointer = new char[lenth + 1];
+	for (int i = 0; i < ms2.lenth_my_string; i++)
+	{
+		ms.my_string_pointer[i] = ms2.my_string_pointer[i];
+	}
+	for (int j = ms2.lenth_my_string; j < ms2.lenth_my_string + ms1.lenth_my_string; j++)
+	{
+		ms.my_string_pointer[j] = ms2.my_string_pointer[j - ms2.lenth_my_string];
+	}
+	ms.my_string_pointer[lenth] = '\0';
+	return ms;
+}*/
+
+
+
+//MyString MyString::operator-(MyString& ms1)
+//{
+//
+//}
+
+
+MyString& MyString::operator=(const MyString& ms1)
+{
+	this->lenth_my_string = ms1.lenth_my_string;
+	this->my_string_pointer = new char[ms1.lenth_my_string+1];
+	for (int i = 0; i < ms1.lenth_my_string; i++)
+	{
+		this->my_string_pointer[i] = ms1.my_string_pointer[i];
+	}
+	this->my_string_pointer[ms1.lenth_my_string] = '\0';
+	return *this;
+}
+
+/*
+MyString operator=(MyString ms1,MyString ms2)
+{
+	ms1->lenth_my_string = ms2.lenth_my_string;
+	this->my_string_pointer = new char[ms2.lenth_my_string + 1];
+	for (int i = 0; i < ms2.lenth_my_string; i++)
+	{
+		this->my_string_pointer[i] = ms.my_string_pointer[i];
+	}
+	this->my_string_pointer[ms1.lenth_my_string] = '\0';
+	return *this;
+	}
+
+	*/
 
 
 
@@ -135,9 +212,10 @@ void test_int_constructor();
 void test_double_constructor();
 void test_buffer_constructor();
 void test_copy_constructor();
+void test_add();
 int main()
 {
-	test_copy_constructor();
+	test_add();
 	return 0;
 }
 
@@ -184,6 +262,18 @@ void test_copy_constructor()
 	cout << "ms1:" << ms1.my_string_pointer<<"\t"<<ms1.lenth_my_string << endl;
 	MyString ms2(ms1);
 	cout << "ms2:" << ms2.my_string_pointer << "\t" << ms2.lenth_my_string << endl;
+}
+
+void test_add()
+{
+	MyString ms1(123);
+	MyString ms2(567);
+	MyString ms3;
+	ms3 = ms2+ms1;
+
+	//ms3 = (ms1 + ms2);
+	cout << ms3.my_string_pointer << endl;
+	
 }
 
 //MyString ms2 = MyString(10);这是不合法的
