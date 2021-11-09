@@ -24,5 +24,10 @@ debug
 
 [C++之error: cannot bind non-const lvalue reference of type ‘myString&’ to an rvalue of type ‘myString_digitalkee的博客-CSDN博客](https://blog.csdn.net/digitalkee/article/details/105092400)
 
-## 2021年11月8日
+## 2021年11月9日
 
+完成了+=的重载
+
+完成了-=（int)的重载
+
+完成了<<的重载
