@@ -14,9 +14,14 @@ public:
 	MyString(MyString &ms);
 	~MyString();
 	//friend	MyString operator+(const MyString& ms2, const MyString& ms1);
+    friend	ostream& operator << (ostream & os,const MyString& ms);
 	MyString operator+(MyString& ms1);
 	//MyString operator-(MyString& ms1);
 	MyString& operator=(const MyString& ms1);
+
+	MyString operator+=(const double);
+	MyString operator-=(const int);
+	MyString operator-=(string);
 
 };
 MyString::MyString(void)
@@ -151,6 +156,57 @@ MyString MyString::operator+(MyString& ms1)
 }
 
 
+MyString MyString::operator+=(const double add_double)
+{
+	/*int temp_int = add_double;
+	int length = 1;//求解输入的长度
+	while (temp_int / 10)
+	{
+		temp_int = temp_int / 10;
+		length++;
+	}
+	length = length + this->lenth_my_string + 2;
+
+	char *my_string_pointer_temp = new char[length + 1];
+	for (int i = 0; i < this->lenth_my_string; i++)
+	{
+		my_string_pointer_temp[i] = this->my_string_pointer[i];
+	}*/
+
+	MyString ms1(add_double);
+	*this = *this + ms1;
+	return *this;
+
+}
+MyString MyString::operator-=(const int sub_int)//如果原尾部相同，则相减
+{
+	MyString ms1(sub_int);
+	for (int i = 0; i < ms1.lenth_my_string; i++)
+	{
+		if (ms1.my_string_pointer[ms1.lenth_my_string - 1 - i] != this->my_string_pointer[this->lenth_my_string - 1 - i])
+			return *this;
+	}
+	int lenth = this->lenth_my_string - ms1.lenth_my_string;
+	this->my_string_pointer[this->lenth_my_string - ms1.lenth_my_string] = '\0';
+	this->lenth_my_string = lenth;
+	return *this;
+
+}
+MyString MyString::operator-=(string)
+{
+	cout << "haha";
+	return *this;
+
+}
+
+ostream& operator << (ostream &os,const MyString& ms)
+{
+	//输出s的代码
+	cout << "lenth:\t" << ms.lenth_my_string << endl;
+	cout << "string:\t" << ms.my_string_pointer << endl;
+	return os;
+}
+
 /*
 MyString operator+(const MyString& ms2, const MyString& ms1)
 {
@@ -213,9 +269,11 @@ void test_double_constructor();
 void test_buffer_constructor();
 void test_copy_constructor();
 void test_add();
+void test_sub();
+void test_stream();
 int main()
 {
-	test_add();
+	test_stream();
 	return 0;
 }
 
@@ -269,11 +327,25 @@ void test_add()
 	MyString ms1(123);
 	MyString ms2(567);
 	MyString ms3;
-	ms3 = ms2+ms1;
-
-	//ms3 = (ms1 + ms2);
-	cout << ms3.my_string_pointer << endl;
+	//ms3 = ms2+ms1;
+	////ms3 = (ms1 + ms2);
+	ms2 += 12.9;
+	cout << ms2.my_string_pointer << endl;
 	
+}
+
+void test_sub()
+{
+	MyString ms1(123);
+	MyString ms2(567);
+	ms1 -= 3;
+	cout << ms1.my_string_pointer << endl;
+	cout << ms1.lenth_my_string << endl;
+}
+void test_stream()
+{
+	MyString ms1(123);
+	cout << ms1;
 }
 
 //MyString ms2 = MyString(10);这是不合法的
