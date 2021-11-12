@@ -13,22 +13,23 @@ public:
 	MyString(char *);
 	MyString(MyString &ms);
 	~MyString();
-	//friend	MyString operator+(const MyString& ms2, const MyString& ms1);
     friend	ostream& operator << (ostream & os,const MyString& ms);
 	MyString operator+(MyString& ms1);
-	//MyString operator-(MyString& ms1);
 	MyString& operator=(const MyString& ms1);
 
 	MyString operator+=(const double);
 	MyString operator-=(const int);
 	MyString operator-=(string);
+	void subString(int m, int n);
+	void find(MyString);
+	void toInt();
+	void tofloat();
 
 };
 MyString::MyString(void)
 {
 	lenth_my_string = 0;
 	my_string_pointer = NULL;
-	cout << "void\n";
 };
 MyString::MyString(int int_construct)
 {
@@ -65,14 +66,10 @@ MyString::MyString(double double_construct)
 		temp_int = temp_int / 10;
 		length_int++;
 	}
-	int length_double = 0;//小数长度
-	while (temp_double * 10.0 - int(temp_double * 10.0) > 0.00001)
-	{
-		temp_double=temp_double*10.0 - int(temp_double * 10.0);
-		length_double++;
-	}
-	length_double++;//小数最后一位
 
+
+	int length_double = 0;//小数长度
+	length_double++;
 	int length = length_int + length_double + 1;
 	my_string_pointer = new char[length+1];
 	lenth_my_string = length;
@@ -80,12 +77,13 @@ MyString::MyString(double double_construct)
 
 
 	temp_int = int(double_construct);
-	temp_double = double_construct - temp_int;//取double小数部分
+	temp_double = double_construct - temp_int+0.001;//取double小数部分
 
 	for (int i = 0; i < length_double; i++)
 	{
 		temp_double = temp_double * 10.0;
 		my_string_pointer[length_int+1+i] = char(48 + int(temp_double));
+		
 	}
 	for (int i = 0; i < length_int; i++)
 	{
@@ -102,7 +100,6 @@ MyString::MyString(char* buffer)
 {
 	char* temp_buffer = buffer;
 	int length = 0;
-	cout << "进入buffer\n";
 	while (*temp_buffer != '\0')
 	{
 		length++;
@@ -180,6 +177,10 @@ MyString MyString::operator+=(const double add_double)
 }
 MyString MyString::operator-=(const int sub_int)//如果原尾部相同，则相减
 {
+	if (this->my_string_pointer == NULL)
+	{
+		return *this;
+	}
 	MyString ms1(sub_int);
 	for (int i = 0; i < ms1.lenth_my_string; i++)
 	{
@@ -192,9 +193,17 @@ MyString MyString::operator-=(const int sub_int)//如果原尾部相同，则相减
 	return *this;
 
 }
-MyString MyString::operator-=(string)
+MyString MyString::operator-=(string sub_string)
 {
-	cout << "haha";
+	
+	for (int i = 0; i < sub_string.length(); i++)
+	{
+		if (sub_string[sub_string.length() - 1 - i] != this->my_string_pointer[this->lenth_my_string - 1 - i])
+			return *this;
+	}
+	int lenth = this->lenth_my_string - sub_string.length();
+	this->my_string_pointer[this->lenth_my_string - sub_string.length()] = '\0';
+	this->lenth_my_string = lenth;
 	return *this;
 
 }
@@ -203,35 +212,14 @@ ostream& operator << (ostream &os,const MyString& ms)
 {
 	//输出s的代码
 	cout << "lenth:\t" << ms.lenth_my_string << endl;
-	cout << "string:\t" << ms.my_string_pointer << endl;
+	cout << "string:\t";
+	if (ms.my_string_pointer != NULL)
+	{
+		 cout<< ms.my_string_pointer << endl;
+	}
 	return os;
 }
 
-/*
-MyString operator+(const MyString& ms2, const MyString& ms1)
-{
-	int lenth = ms1.lenth_my_string + ms2.lenth_my_string;
-	MyString ms;
-	ms.lenth_my_string = lenth;
-	ms.my_string_pointer = new char[lenth + 1];
-	for (int i = 0; i < ms2.lenth_my_string; i++)
-	{
-		ms.my_string_pointer[i] = ms2.my_string_pointer[i];
-	}
-	for (int j = ms2.lenth_my_string; j < ms2.lenth_my_string + ms1.lenth_my_string; j++)
-	{
-		ms.my_string_pointer[j] = ms2.my_string_pointer[j - ms2.lenth_my_string];
-	}
-	ms.my_string_pointer[lenth] = '\0';
-	return ms;
-}*/
-
-
-
-//MyString MyString::operator-(MyString& ms1)
-//{
-//
-//}
 
 
 MyString& MyString::operator=(const MyString& ms1)
@@ -246,21 +234,97 @@ MyString& MyString::operator=(const MyString& ms1)
 	return *this;
 }
 
-/*
-MyString operator=(MyString ms1,MyString ms2)
+
+
+void MyString::subString(int m, int n)
 {
-	ms1->lenth_my_string = ms2.lenth_my_string;
-	this->my_string_pointer = new char[ms2.lenth_my_string + 1];
-	for (int i = 0; i < ms2.lenth_my_string; i++)
+	for (int i = 0; i < n && m + i < this->lenth_my_string; i++)
 	{
-		this->my_string_pointer[i] = ms.my_string_pointer[i];
+		cout << this->my_string_pointer[m + i];
 	}
-	this->my_string_pointer[ms1.lenth_my_string] = '\0';
-	return *this;
+	cout << endl;
+}
+void MyString::find(MyString ms)
+{
+	if (ms.lenth_my_string > this->lenth_my_string)
+	{
+		cout << -2 << endl;
+		return;
 	}
+	for (int i = 0; i < this->lenth_my_string; i++)
+	{
+		if (ms.my_string_pointer[0] == this->my_string_pointer[i])
+		{
+			for (int j = 1; j < ms.lenth_my_string && j + i < this->lenth_my_string; j++)
+			{
+				if (ms.my_string_pointer[j] != this->my_string_pointer[i + j])
+				{
+					cout << -2 << endl;
+					return;
+				}
+				
+			}
+			cout << i << endl;
+			return;
+		}
+	}
+	cout << -2 << endl;
+	return;
+}
 
-	*/
-
+void MyString::toInt()
+{
+	int int_ms = 0;
+	int temp = 1;
+	for (int i = lenth_my_string-1; i >=0; i--)
+	{
+		if (this->my_string_pointer[i] < '0' || this->my_string_pointer[i]>'9')
+		{
+			cout << -2 << endl;
+			return;
+		}
+		int_ms += (int(this->my_string_pointer[i]) - 48) * temp;
+		temp = temp * 10;
+	}
+	cout << int_ms << endl;
+}
+void MyString::tofloat()
+{
+	double double_ms = 0;
+	int dot_position = -1;//小数点位置
+	for (int i = 0; i < this->lenth_my_string; i++)
+	{
+		if (this->my_string_pointer[i] == '.')
+		{ 
+			dot_position = i;
+			break;
+		}
+		
+	}
+	if (dot_position == -1)
+	{
+		cout << -2 << endl;
+		return;
+	}
+	int temp = 1;
+	for (int j = dot_position - 1; j >= 0; j--)
+	{
+		if (this->my_string_pointer[j] < '0' || this->my_string_pointer[j]>'9')
+		{
+			cout << -2 << endl;
+			return;
+		}
+		double_ms += (int(this->my_string_pointer[j]) - 48) * temp;
+		temp = temp * 10;
+	}
+	if (this->my_string_pointer[dot_position + 1] < '0' || this->my_string_pointer[dot_position + 1]>'9')
+	{
+		cout << -2 << endl;
+		return;
+	}
+	else double_ms += 0.1 * (int(this->my_string_pointer[dot_position+1]) - 48);//默认留一位小数
+	return;
+}
 
 
 void test_constructor();//构造函数的测试
@@ -271,9 +335,31 @@ void test_copy_constructor();
 void test_add();
 void test_sub();
 void test_stream();
+void test_sub_string();
+void test_subString();
+void test_find();
+void test_toInt();
+void test_tofloat();
+
 int main()
 {
-	test_stream();
+	MyString ms;
+	cout << ms << endl;
+
+	MyString ms1(123);
+	cout << ms1 << endl;
+
+	MyString ms2(123.241);
+	cout << ms2 << endl;
+
+	MyString ms3(ms1);
+	cout << ms3 << endl;
+
+	char abc[] = "abc";
+	MyString ms4(abc);
+	cout << ms4 << endl;
+
+	//cout<<
 	return 0;
 }
 
@@ -327,10 +413,11 @@ void test_add()
 	MyString ms1(123);
 	MyString ms2(567);
 	MyString ms3;
+	MyString ms4(89);
 	//ms3 = ms2+ms1;
 	////ms3 = (ms1 + ms2);
-	ms2 += 12.9;
-	cout << ms2.my_string_pointer << endl;
+	ms3 = ms1 + ms2+ms4;
+	cout << ms3.my_string_pointer << endl;
 	
 }
 
@@ -342,10 +429,44 @@ void test_sub()
 	cout << ms1.my_string_pointer << endl;
 	cout << ms1.lenth_my_string << endl;
 }
+void test_sub_string()
+{
+	MyString ms1(123);
+	ms1 -= "23";
+	cout << ms1 << endl;
+}
 void test_stream()
 {
 	MyString ms1(123);
-	cout << ms1;
+	MyString ms2(456);
+	cout << ms1 << ms2;
 }
-
-//MyString ms2 = MyString(10);这是不合法的
+void test_subString()
+{
+	MyString ms1(123);
+	ms1.subString(1, 10);
+}
+void test_find()
+{
+	MyString ms1(1234);
+	MyString ms2(213);
+	ms1.find(ms2);
+}
+void test_toInt()
+{
+	MyString ms(123);
+	ms.toInt();
+	char a[] = "hahaha";
+	MyString ms1(a);
+	ms1.toInt();
+	MyString ms2(12.1);
+	cout << ms2;
+	double db = 12.0;
+	cout << db << endl;
+}
+void test_tofloat()
+{
+	MyString ms(12.0);
+	cout << ms.my_string_pointer << endl;
+	ms.tofloat();
+}
