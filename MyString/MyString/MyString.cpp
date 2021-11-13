@@ -15,15 +15,18 @@ public:
 	~MyString();
     friend	ostream& operator << (ostream & os,const MyString& ms);
 	MyString operator+(MyString& ms1);
+	MyString operator-(MyString& ms1);
+
 	MyString& operator=(const MyString& ms1);
 
 	MyString operator+=(const double);
 	MyString operator-=(const int);
 	MyString operator-=(string);
-	void subString(int m, int n);
-	void find(MyString);
-	void toInt();
-	void tofloat();
+
+	char* subString(int m, int n);
+	int  find(MyString);
+	int toInt();
+	double tofloat();
 
 };
 MyString::MyString(void)
@@ -151,25 +154,27 @@ MyString MyString::operator+(MyString& ms1)
 	ms.my_string_pointer[lenth] = '\0';
 	return ms;
 }
+MyString MyString::operator-(MyString& ms1)
+{
+	if (this->my_string_pointer == NULL)
+	{
+		return *this;
+	}
+	for (int i = 0; i < ms1.lenth_my_string; i++)
+	{
+		if (ms1.my_string_pointer[ms1.lenth_my_string - 1 - i] != this->my_string_pointer[this->lenth_my_string - 1 - i])
+			return *this;
+	}
+	int lenth = this->lenth_my_string - ms1.lenth_my_string;
+	this->my_string_pointer[this->lenth_my_string - ms1.lenth_my_string] = '\0';
+	this->lenth_my_string = lenth;
+	return *this;
+}
+
 
 
 MyString MyString::operator+=(const double add_double)
 {
-	/*int temp_int = add_double;
-	int length = 1;//求解输入的长度
-	while (temp_int / 10)
-	{
-		temp_int = temp_int / 10;
-		length++;
-	}
-	length = length + this->lenth_my_string + 2;
-
-	char *my_string_pointer_temp = new char[length + 1];
-	for (int i = 0; i < this->lenth_my_string; i++)
-	{
-		my_string_pointer_temp[i] = this->my_string_pointer[i];
-	}*/
-
 	MyString ms1(add_double);
 	*this = *this + ms1;
 	return *this;
@@ -236,20 +241,22 @@ MyString& MyString::operator=(const MyString& ms1)
 
 
 
-void MyString::subString(int m, int n)
+char* MyString::subString(int m, int n)
 {
-	for (int i = 0; i < n && m + i < this->lenth_my_string; i++)
+	char* substring = new char[n + 1];
+	int i = 0;
+	for (i=0; i < n && m + i < this->lenth_my_string; i++)
 	{
-		cout << this->my_string_pointer[m + i];
+		substring[i] = this->my_string_pointer[m +i];
 	}
-	cout << endl;
+	substring[i + 1] = '\0';
+	return substring;
 }
-void MyString::find(MyString ms)
+int MyString::find(MyString ms)
 {
 	if (ms.lenth_my_string > this->lenth_my_string)
 	{
-		cout << -2 << endl;
-		return;
+		return -2;
 	}
 	for (int i = 0; i < this->lenth_my_string; i++)
 	{
@@ -259,20 +266,17 @@ void MyString::find(MyString ms)
 			{
 				if (ms.my_string_pointer[j] != this->my_string_pointer[i + j])
 				{
-					cout << -2 << endl;
-					return;
+					return -2;
 				}
 				
 			}
-			cout << i << endl;
-			return;
+			return i;
 		}
 	}
-	cout << -2 << endl;
-	return;
+	return -2;
 }
 
-void MyString::toInt()
+int MyString::toInt()
 {
 	int int_ms = 0;
 	int temp = 1;
@@ -280,15 +284,14 @@ void MyString::toInt()
 	{
 		if (this->my_string_pointer[i] < '0' || this->my_string_pointer[i]>'9')
 		{
-			cout << -2 << endl;
-			return;
+			return -2;
 		}
 		int_ms += (int(this->my_string_pointer[i]) - 48) * temp;
 		temp = temp * 10;
 	}
-	cout << int_ms << endl;
+	return int_ms;
 }
-void MyString::tofloat()
+double MyString::tofloat()
 {
 	double double_ms = 0;
 	int dot_position = -1;//小数点位置
@@ -303,27 +306,24 @@ void MyString::tofloat()
 	}
 	if (dot_position == -1)
 	{
-		cout << -2 << endl;
-		return;
+		return -2;
 	}
 	int temp = 1;
 	for (int j = dot_position - 1; j >= 0; j--)
 	{
 		if (this->my_string_pointer[j] < '0' || this->my_string_pointer[j]>'9')
 		{
-			cout << -2 << endl;
-			return;
+			return -2;
 		}
 		double_ms += (int(this->my_string_pointer[j]) - 48) * temp;
 		temp = temp * 10;
 	}
 	if (this->my_string_pointer[dot_position + 1] < '0' || this->my_string_pointer[dot_position + 1]>'9')
 	{
-		cout << -2 << endl;
-		return;
+		return -2;
 	}
 	else double_ms += 0.1 * (int(this->my_string_pointer[dot_position+1]) - 48);//默认留一位小数
-	return;
+	return double_ms;
 }
 
 
@@ -343,6 +343,32 @@ void test_tofloat();
 
 int main()
 {
+	MyString ms(123456789);
+	cout << "ms:\n" << ms << endl;
+	char* p;
+	p = ms.subString(1, 100);
+	cout << p << endl;
+	MyString ms2(34);
+	cout << ms.find(ms2) << endl;
+	MyString ms3(25);
+	cout << ms.find(ms3) << endl;
+
+	cout << ms.toInt() << endl;
+	cout << ms.tofloat() << endl;
+	return 0;
+}
+
+
+void test_constructor()//构造函数的测试
+{
+	/*char* cp = new char;
+	MyString ms1;
+	MyString ms2(137);
+	MyString ms3(cp);
+	MyString ms4(ms1);
+	delete cp;*/
+
+
 	MyString ms;
 	cout << ms << endl;
 
@@ -359,19 +385,16 @@ int main()
 	MyString ms4(abc);
 	cout << ms4 << endl;
 
+	MyString ms5(1.09);
+	cout << ms5 << endl;
+
+	MyString ms6(1234);
+	MyString ms7(34);
+	MyString ms8;
+	ms8 = ms6 - ms7;
+	cout << "----------\n";
+	cout << ms8 << endl;
 	//cout<<
-	return 0;
-}
-
-
-void test_constructor()//构造函数的测试
-{
-	char* cp = new char;
-	MyString ms1;
-	MyString ms2(137);
-	MyString ms3(cp);
-	MyString ms4(ms1);
-	delete cp;
 }
 
 void test_int_constructor()
