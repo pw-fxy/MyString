@@ -1,1 +1,3 @@
-﻿
+﻿  MyString.cpp
+D:\study\算法\homework\MyString\MyString\MyString.cpp(204,20): warning C4018: “<”: 有符号/无符号不匹配
+  MyString.vcxproj -> D:\study\算法\homework\MyString\Debug\MyString.exe
